@@ -58,9 +58,9 @@ foreach ($services as $provider => $service) {
             $consulta = $file_db->prepare($sql_consulta);
             $consulta->execute();
             $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
-            echo "Existe el email \n";
 
             if (!empty($resultado)) { //si tiene email entra
+            	echo "Existe el email \n";
                 $fecha_envio = $resultado["fecha_envio"];
                 $ultimo_envio = DateTime::createFromFormat("Y-m-d H:i:s", $fecha_envio);
 
@@ -70,7 +70,7 @@ foreach ($services as $provider => $service) {
 
                     $para = $resultado["email"];
                     echo "Intento enviar email \n";
-
+                    $mail->clearAddresses();
                     $mail->addAddress($para);
                     $mail->msgHTML("informamos que su servicio " . $_url . " se encuentra inaccesible. Por favor no responda este mensaje");
                     if (!$mail->send()) {
@@ -81,7 +81,9 @@ foreach ($services as $provider => $service) {
                         $update->execute();
                     }
                 }
-            }
+            }else{
+		echo "No existe el mail \n";
+	}
         }
     }
 }
