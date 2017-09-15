@@ -25,8 +25,15 @@ $mail->Subject = 'Servidor Inaccesible';
 #
 $path= '/var/www/mapa/ogc';
 
+$aContext = array(
+    'http' => array(
+        'proxy' => '172.20.203.111:3128',
+        'request_fulluri' => true,
+    ),
+);
+$cxContext = stream_context_create($aContext);
 # Consulta Servidores de los servicios.
-$file = file_get_contents("http://servicios.idera.gob.ar/mapa/sources.json");
+$file = file_get_contents("http://servicios.idera.gob.ar/mapa/sources.json", False, $cxContext);
 $services = json_decode($file, true);
 
 $file_db = new PDO('sqlite:emails.sqlite');
