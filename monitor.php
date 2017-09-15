@@ -5,29 +5,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
+ # Configuracion para envio de mails, para pruebas puede utilizarse Gmail
 require 'PHPMailer/PHPMailerAutoload.php';
 $mail = new PHPMailer;
 $mail->isSMTP();
 $mail->SMTPDebug = 2;
 $mail->Debugoutput = 'html';
-$mail->Host = '***';
-$mail->Port = 54645;
+$mail->Host = 'mail.ign.gob.ar';
+$mail->Port = 25;
 //$mail->SMTPSecure = 'tls';
 $mail->SMTPAuth = true;
-$mail->Username = "***";
-$mail->Password = "***";
+$mail->Username = "admin@idera.gob.ar";
+$mail->Password = "info*000";
 $mail->setFrom('admin@idera.gob.ar', 'IDERA');
 $mail->Subject = 'Servidor Inaccesible';
 
 
+#
 $path= '/var/www/mapa/ogc';
+
 # Consulta Servidores de los servicios.
-$file = file_get_contents("http://servicios.idera.gob.ar/mapa/sources.php?format=json");
-$jSources = str_replace("var sources = ", "", $file);
-$services = json_decode($jSources, true);
+$file = file_get_contents("http://servicios.idera.gob.ar/mapa/sources.json");
+$services = json_decode($file, true);
 
-
-$file_db = new PDO('sqlite:/var/www/mapa/external/emails.sqlite');
+$file_db = new PDO('sqlite:emails.sqlite');
 
 $hoy = new DateTime();
 
@@ -45,15 +47,17 @@ $update->bindParam(':fecha', $_fecha);
 exec("rm $path/*.xml");
 
 # Recorre los servidores y obtiene capacidades de cada servicio.
+if ($services){
+  foreach ($services as $service) {
+    foreach ($service as $nodo)
+    if (isset($nodo["wms"])) {
 
-foreach ($services as $provider => $service) {
-    if (isset($service["url"]) && ($service["ptype"] != "gxp_cataloguesource")) {
-        exec("wget --tries=2 --timeout=60 -O $path/$provider.xml '$service[url]&service=WMS&version=1.1.1&request=GetCapabilities'");
+        exec("wget --tries=2 --timeout=60 -O $path/$nodo[id].xml "  . $nodo["wms"] . "'&service=WMS&version=1.1.1&request=GetCapabilities'");
 
-        if (0 == filesize("$path/$provider.xml")) {
+        if (0 == filesize("$path/$nodo[id].xml")) {
 
-            $_provider = $provider;
-            $_url = $service["url"];
+            $_provider = $nodo['id'];
+            $_url = $nodo["wms"];
             $sql_consulta = "SELECT * FROM emails where provider = '$_provider'";
             $consulta = $file_db->prepare($sql_consulta);
             $consulta->execute();
@@ -86,4 +90,16 @@ foreach ($services as $provider => $service) {
 	}
         }
     }
+}
+} else {
+  $para = "admin@idera.gob.ar";
+  echo "Intento enviar email \n";
+  $mail->clearAddresses();
+  $mail->addAddress($para);
+  $mail->msgHTML("informamos que el script sources.php no devuelve datos. Por favor no responda este mensaje");
+  if (!$mail->send()) {
+      echo "Mailer Error: " . $mail->ErrorInfo;
+  } else {
+      echo "envio un email porque el script sources.php no devuelve datos\n";
+  }
 }
