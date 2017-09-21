@@ -1,2 +1,0 @@
-#!/bin/bash
-grep "<ContactElectronicMailAddress>.*</ContactElectronicMailAddress>" /var/www/mapa/ogc/*.xml | sed "s/<ContactElectronicMailAddress>//" | sed "s/<\/ContactElectronicMailAddress>//" > /var/www/mapa/ogc/emails.txt
