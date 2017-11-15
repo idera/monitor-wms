@@ -1,6 +1,6 @@
 <?php
 
-$path= '/var/www/mapa/ogc';
+$path= './capabilities';
 # Consulta Servidores de los servicios.
 $aContext = array(
     'http' => array(
@@ -10,7 +10,8 @@ $aContext = array(
 );
 $cxContext = stream_context_create($aContext);
 # Consulta Servidores de los servicios.
-$file = file_get_contents("http://servicios.idera.gob.ar/mapa/sources.json", False, $cxContext);
+$file = file_get_contents("http://servicios.idera.gob.ar/geoservicios/sources.json",
+    False, $cxContext);
 $services = json_decode($file, true);
 
 $file_db = new PDO('sqlite:emails.sqlite');
@@ -26,7 +27,7 @@ $file_db->exec("CREATE TABLE IF NOT EXISTS emails (
 
 // Prepare INSERT statement to SQLite3 file db
 $sql_insert = "INSERT INTO emails (provider, email, fecha_envio)
-            VALUES (:provider, :email, '2017-09-15 00:00:00')";
+            VALUES (:provider, :email, '2001-01-01 00:00:00')";
 $insert= $file_db->prepare($sql_insert);
 
 // Bind parameters to statement variables
