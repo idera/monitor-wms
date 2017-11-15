@@ -17,13 +17,13 @@ $mail->Port = 25;
 //$mail->SMTPSecure = 'tls';
 $mail->SMTPAuth = true;
 $mail->Username = "admin@idera.gob.ar";
-$mail->Password = "info*000";
+$mail->Password = "xxxx";
 $mail->setFrom('admin@idera.gob.ar', 'IDERA');
 $mail->Subject = 'Servidor Inaccesible';
 
 
 #
-$path= '/var/www/mapa/ogc';
+$path= './capabilities';
 
 $aContext = array(
     'http' => array(
@@ -33,7 +33,8 @@ $aContext = array(
 );
 $cxContext = stream_context_create($aContext);
 # Consulta Servidores de los servicios.
-$file = file_get_contents("http://servicios.idera.gob.ar/mapa/sources.json", False, $cxContext);
+$file = file_get_contents("http://servicios.idera.gob.ar/geoservicios/sources.json", 
+			  False, $cxContext);
 $services = json_decode($file, true);
 
 $file_db = new PDO('sqlite:emails.sqlite');
@@ -59,7 +60,8 @@ if ($services){
     foreach ($service as $nodo)
     if (isset($nodo["wms"])) {
 
-        exec("wget --tries=2 --timeout=60 -O $path/$nodo[id].xml "  . $nodo["wms"] . "'&service=WMS&version=1.1.1&request=GetCapabilities'");
+        exec("wget --tries=2 --timeout=60 -O $path/$nodo[id].xml "  . $nodo["wms"] . 
+	     "'&service=WMS&version=1.1.1&request=GetCapabilities'");
 
         if (0 == filesize("$path/$nodo[id].xml")) {
 
@@ -83,11 +85,12 @@ if ($services){
                     echo "Intento enviar email \n";
                     $mail->clearAddresses();
                     $mail->addAddress($para);
-                    $mail->msgHTML("informamos que su servicio " . $_url . " se encuentra inaccesible. Por favor no responda este mensaje");
+                    $mail->msgHTML("Informamos que su servicio " . $_url . 
+				   		" se encuentra inaccesible. Por favor no responda este mensaje");
                     if (!$mail->send()) {
                         echo "Mailer Error: " . $mail->ErrorInfo;
                     } else {
-                        echo "envio un email porque el servidor de $_provider esta caido \n";
+                        echo "envio un email porque el servidor de $_provider esta caído \n";
                         $_fecha = $hoy->format("Y-m-d H:i:s");
                         $update->execute();
                     }
