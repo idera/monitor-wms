@@ -8,6 +8,7 @@ Monitor de servicios WMS que alerta vía mail cuando alguno está caído.
 1. Ejecutar la primera vez el script `mails.php` mediante linea de comandos
 1. Ubicar archivos de la carpeta `crons/` (ver README)
 
-Prueba de mail
+## Prueba de mail
+
 Para probar si se estan enviando las notificaciones via mail, cambiar la variable $test_mail = true en el archivo monitor.php
-Al hacer esto no se comprobaráinguno de los servidores, solo se envia un mail de prueba.
+Al hacer esto no se comprobará ninguno de los servidores, sólo se envia un mail de prueba.
