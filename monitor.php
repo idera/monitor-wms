@@ -7,21 +7,7 @@
  */
 
  # Configuracion para envio de mails, para pruebas puede utilizarse Gmail
-require 'PHPMailer/PHPMailerAutoload.php';
-$mail = new PHPMailer;
-$mail->isSMTP();
-$mail->SMTPDebug = 2;
-$mail->Debugoutput = 'html';
-$mail->Host = 'mail.ign.gob.ar';
-$mail->Port = 25;
-//$mail->SMTPSecure = 'tls';
-$mail->SMTPAuth = true;
-$mail->Username = "admin@idera.gob.ar";
-$mail->Password = "xxxx";
-$mail->setFrom('admin@idera.gob.ar', 'IDERA');
-$mail->Subject = 'Servidor Inaccesible';
-
-
+require 'config/config-mail.php';
 #
 $path= './capabilities';
 
