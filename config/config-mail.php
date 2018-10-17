@@ -18,7 +18,7 @@ $mail->Port = 25;
 //$mail->SMTPSecure = 'tls';
 $mail->SMTPAuth = true;
 $mail->Username = "admin@idera.gob.ar";
-$mail->Password = "info*00";
+$mail->Password = "infopass***";
 $mail->setFrom('admin@idera.gob.ar', 'IDERA');
 $mail->Subject = 'Servidor Inaccesible';
 

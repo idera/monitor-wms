@@ -8,6 +8,7 @@
 
  # Configuracion para envio de mails, para pruebas puede utilizarse Gmail
 require 'config/config-mail.php';
+$mail_test = false;
 #
 $path= './capabilities';
 
@@ -41,7 +42,7 @@ $update->bindParam(':fecha', $_fecha);
 exec("rm $path/*.xml");
 
 # Recorre los servidores y obtiene capacidades de cada servicio.
-if ($services){
+if ($services && !$mail_test){
   foreach ($services as $service) {
     foreach ($service as $nodo)
     if (isset($nodo["wms"])) {
@@ -88,11 +89,14 @@ if ($services){
     }
 }
 } else {
-  $para = "admin@idera.gob.ar";
+  $para = "info@idera.gob.ar";
   echo "Intento enviar email \n";
   $mail->clearAddresses();
   $mail->addAddress($para);
-  $mail->msgHTML("informamos que el script sources.php no devuelve datos. Por favor no responda este mensaje");
+  if($mail_test) {$mail->msgHTML("Mail de prueba");}
+  else {
+     $mail->msgHTML("informamos que el script sources.php no devuelve datos. Por favor no responda este mensaje");
+  }
   if (!$mail->send()) {
       echo "Mailer Error: " . $mail->ErrorInfo;
   } else {
