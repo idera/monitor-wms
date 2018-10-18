@@ -12,3 +12,11 @@ Monitor de servicios WMS que alerta vía mail cuando alguno está caído.
 
 Para probar si se estan enviando las notificaciones via mail, cambiar la variable $test_mail = true en el archivo monitor.php
 Al hacer esto no se comprobará ninguno de los servidores, sólo se envia un mail de prueba.
+
+# Protocolo de verificación:
+1. Extrae los servicios de IDERA desde http://servicios.idera.gob.ar/geoservicios/sources.json.
+2. Intenta descargar el catálogo de cada servicio.
+    * Si se descarga el xml del servicio la aplicación asume que el servidor funciona
+    * Si no se descarga el xml del servicio:
+        * consulta la tabla emails y extrae el email del proveedor
+        * si existe mail envía al proveedor la notificación de servidor caído, sino lo envía al administrador de IDERA
